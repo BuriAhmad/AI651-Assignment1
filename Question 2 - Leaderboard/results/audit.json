@@ -1,0 +1,8 @@
+{
+  "checks": "Passed data continuity, target visibility, one-hot states, 168 ordered finite nonnegative predictions, all 12 fold/seed rows, summary aggregation, configuration consistency, epoch ledger, and horizon coverage.",
+  "rmse_reduction_pct": 33.58295502895841,
+  "all_six_paired_rmse_improve": true,
+  "task1_notebook_status": "Local notebook remains unexecuted with placeholders; preserved.",
+  "task2_code_limitation": "train_fold/fold_pred/predict_test never call model.eval(); validation and final inference use active dropout.",
+  "no_training_or_leaderboard_submission_performed": true
+}

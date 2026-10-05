@@ -1,0 +1,155 @@
+% Combined submission report; Task 1 response text retained from the existing draft.
+% Compile from the repository root so the numbered figure PDFs can be found.
+% Complete the name, student ID, repository URL, and AI-history fields below.
+% Exported CSVs support the numbers. The saved notebook currently has no outputs
+% and still contains implementation placeholders; no successful check is asserted here.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,tabularx}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlist{nosep,leftmargin=*}
+\captionsetup{font=small,labelfont=bf}
+\newcommand{\studentname}{Burhan Ahmad}
+\newcommand{\studentid}{27100405}
+\newcommand{\repository}{\url{https://github.com/BuriAhmad/AI651-Assignment1}}
+\newcommand{\rmseunit}{\ensuremath{\mathrm{m/s^2}}}
+\newcommand{\mseunit}{\ensuremath{(\mathrm{m/s^2})^2}}
+\newcommand{\evidencefigure}[3]{%
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth,height=.78\textheight,keepaspectratio]{#1}
+    \caption{#2}\label{#3}
+  \end{figure}}
+
+\begin{document}
+\begin{center}
+  {\Large\bfseries AI651 --- Assignment 1}\par
+  {\large Tasks 1 and 2}\par
+  \studentname\quad |\quad \studentid
+\end{center}
+\textbf{Code repository:} \repository
+
+\section*{Task 1: Forecasting Across Heterogeneous Sensors}
+\textbf{Experimental setup.} A 96-sample context from one vibration sensor is used to forecast 48 samples at 20 Hz. Stations 1--3 are established; Station 4 is excluded from model fitting and scale estimation but supplies its own context at inference. Training, validation, and final-test target regions are $[0,9600)$, $[9600,12480)$, and $[12480,15360)$, respectively. The results below use the supplied full-run exports. Unless explicitly labeled otherwise, errors are on validation data; Task 1 RMSEs are in \rmseunit{} and MSEs in \mseunit{}.
+
+\section*{Response 1A}
+Before Output 1.1, my predicted ordering for established stations was Period-routed ridge $>$ Raw Attention $>$ Sensor-specific ridge $>$ Shared ridge. For held-out Station 4, I predicted Period-routed ridge $>$ Raw Attention $>$ Shared ridge, with Sensor-specific ridge unavailable.
+
+The measured established-station ordering was Period-routed ridge (RMSE 0.166) $>$ Raw Attention (0.424) $>$ Shared ridge (0.767) $>$ Sensor-specific ridge (0.768). I therefore revise only the two fixed ridges: their errors are almost tied, and the tiny difference does not establish a meaningful advantage. Period-routed ridge was best for every product in both populations (Table~\ref{tab:products}). Sensor-specific ridge was slightly better than Shared ridge on established Products A and B, but worse on C. On held-out Station 4, my predicted ordering was confirmed: Period-routed ridge (0.173) $>$ Raw Attention (0.612) $>$ Shared ridge (0.876).
+
+Period routing reduced RMSE relative to Raw Attention by approximately 61\% on established stations and 72\% on Station 4. This supports operating pace as the main conditioning variable. Raw Attention builds its mixing from the current context, while Shared ridge and each Sensor-specific ridge matrix apply fixed operators that must compromise across different paces. Conditioning only on station identity does not resolve changes of pace within a station.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Product-level validation RMSE from Output 1.1. Established means Stations 1--3; unavailable entries reflect the absence of a Sensor-specific ridge fit for Station 4.}
+\label{tab:products}
+\begin{tabular}{lrrr rrr}
+\toprule
+&\multicolumn{3}{c}{Established}&\multicolumn{3}{c}{Held-out Station 4}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Model&A&B&C&A&B&C\\
+\midrule
+Shared ridge&0.805&0.854&0.621&0.909&0.982&0.713\\
+Sensor-specific ridge&0.804&0.852&0.630&---&---&---\\
+Period-routed ridge&0.181&0.164&0.152&0.184&0.182&0.150\\
+Raw Attention&0.385&0.461&0.422&0.645&0.562&0.627\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Response 1B}
+Output 1.2 shows that station identity alone does not determine the continuation rule. Station 1 has a period of 16.135 samples for Product A and 30.093 for Product C. One fixed ridge matrix must compromise between these different oscillation rates. In the illustrated validation windows, the fixed ridge forecasts fail to track the peaks and troughs of both regimes as closely as Period-routed ridge (Figure~\ref{fig:forecasts}); its window RMSEs are 0.232 and 0.150 for A and C, respectively.
+
+Attention's learned projections $W_Q,W_K,W_V$ are shared, but $Q=XW_Q$, $K=XW_K$, and $V=XW_V$ depend on the context $X$. Changing $X$ changes the query--key comparisons, the Attention weights, and therefore the value-mixing operation. Output 1.3 confirms this: the two contexts have mean absolute weight difference 0.011 and maximum difference 0.410 (Figure~\ref{fig:attention}). Ridge instead applies its same fitted operator to every context assigned to that matrix. These maps show context-dependent mixing; they do not establish recovery of the physical operating period.
+
+\section*{Response 2}
+The selected moving-average width was 41 samples. Output 2.1 shows how candidate widths change the trend and remainder: the wider average leaves the faster oscillations more visible in the remainder, and width 41 produces a sharp period-score peak near the actual period (Figure~\ref{fig:decomposition}). Output 2.2 quantifies this on established-station \emph{training} windows: within-one-sample recovery rises from 0.687 for raw signals to 0.998 at width 41. Width 41 maximizes this recovery measure, although width 25 has the smaller median absolute period error (0.122 versus 0.216 samples).
+
+The oracle diagnostic is useful because the synthetic generator provides the true period for analysis, allowing width selection against known repetition using training data only. This truth is not supplied to the forecasting model. Output 2.3 also shows a forecasting improvement: established validation RMSE/MSE falls from 0.424/0.180 for Raw Attention to 0.298/0.089 for Attention + decomposition. Held-out validation RMSE/MSE falls from 0.612/0.375 to 0.445/0.198.
+
+A moving average is a sensible bias for a slowly varying baseline superimposed on faster vibration. The remainder is an estimate, not the true generating component. Abrupt baseline changes would violate the smoothness assumption: smoothing would smear the discontinuity over neighboring positions and contaminate the remainder.
+
+\section*{Response 3}
+Output 3.1 gives FFT-based delay scores $4,-4,4,-4$ for delays 0--3, matching direct circular correlation. The required aggregation example uses values $[10,20,30,40]$, delays $[1,3]$, and weights $[0.75,0.25]$. With
+\[
+ z_t=\sum_j\alpha_jv_{(t-\tau_j)\bmod L},
+\]
+the expected output is $[35,15,25,25]$; in particular, $z_0=0.75(40)+0.25(20)=35$, establishing the $t-\tau$ indexing direction.
+% The saved notebook does not contain executed aggregation-check evidence.
+% Replace "expected output" with "observed output" only after checking the executed example.
+
+In Output 3.2, the illustrated Station 2 Product A run has $P=16.135$ samples. Strong residual recurrence occurs at delays 16 and 32, with correlations 0.896 and 0.897, close to $P$ and $2P=32.269$ (Figure~\ref{fig:recurrence}). Slow drift makes the raw signal similar to shifted copies over many lags, obscuring the distinctive recurring delays. Removing it exposes sharper peaks and supports the delay mixer's displacement-based bias.
+
+This assumption could fail for an isolated transient or a period changing rapidly within one context: no small set of recurring displacements would remain informative, and shifted values could combine unrelated events. Output 3.2 is a signal-level correlation diagnostic, not the trained mixer's learned query/key scores.
+
+\section*{Response 4}
+\textbf{(a)} Before Output 4.1, I predicted that decomposition would help most when the slow component was prominent because it separates slow trend from repetition before forecasting.
+
+\textbf{(b)} Established validation errors (Outputs 1.1 and 4.1):
+\begin{center}
+\small
+\begin{tabular}{lrr}
+\toprule
+Model & RMSE & MSE \\
+\midrule
+Shared ridge & 0.767 & 0.588 \\
+Sensor-specific ridge & 0.768 & 0.590 \\
+Period-routed ridge & 0.166 & 0.028 \\
+Raw Attention & 0.424 & 0.180 \\
+Attention + decomposition & 0.298 & 0.089 \\
+Raw delay mixer & 0.223 & 0.050 \\
+Autoformer-inspired & 0.199 & 0.040 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Decomposition improved Attention (0.424 to 0.298) and delay mixing (0.223 to 0.199); delay mixing improved raw (0.424 to 0.223) and decomposed inputs (0.298 to 0.199). Established RMSE gains overlapped rather than adding. This is an empirical observation, not a causal explanation. Errors generally increased across the horizon; Period-routed ridge stayed lowest, while Autoformer-inspired was strongest among neural models overall (Figure~\ref{fig:horizon}).
+
+\textbf{(c)} I selected Period-routed ridge for both populations: validation RMSEs were 0.166/0.173, with 59,904 parameters and 0.003\,s fitting time. Autoformer-inspired had worse validation RMSEs (0.199/0.241), 373,026 parameters, and 819.367\,s fitting time. Output 4.3 gave established/held-out test RMSEs of 0.161/0.183 and MSEs of 0.026/0.033, supporting the validation choices.
+
+\input{Task2_Report_Section.tex}
+
+\clearpage
+\appendix
+\section*{Task 1 supporting numbered figures}
+The following figures are the original exports used to interpret the responses. They retain their notebook Output identifiers. Output 4.2 summarizes the full 48-step horizon; its curves fluctuate, so the response describes the overall increase rather than claiming monotonic growth.
+
+\evidencefigure{Question 1/results/design/1.2-1.pdf}{Output 1.2: Station 1 validation forecast cases under Products A and C. The same station exhibits different operating periods.}{fig:forecasts}
+\evidencefigure{Question 1/results/design/1.3-1.pdf}{Output 1.3: Attention maps for two contexts and their difference. Shared learned projections produce different input-dependent weights.}{fig:attention}
+\evidencefigure{Question 1/results/design/2.1-1.pdf}{Output 2.1: candidate moving-average widths, their residuals, and period-score evidence. Width 41 is selected.}{fig:decomposition}
+\evidencefigure{Question 1/results/design/3.2-1.pdf}{Output 3.2: raw and residual signal correlations for a Product A validation context. The peaks are diagnostic recurrence evidence, not learned query/key scores.}{fig:recurrence}
+\evidencefigure{Question 1/results/design/4.2-1.pdf}{Output 4.2: validation horizon RMSE for established stations and held-out Station 4.}{fig:horizon}
+
+\clearpage
+\section*{AI-use record for Task 1 report preparation}
+Generative AI assisted with interpretation and drafting of the responses supplied in chat. Codex checked the reported numbers against the exported tables and formatted the material into this LaTeX document.
+
+\textbf{Prompt excerpt supplied to Codex:} ``then i want you to create the latex and write resposes inside it. all in one go okay?'' This was followed by the Task 1 interpretation and the five drafted responses.
+
+\textbf{Output:} this Task 1 LaTeX draft, containing Responses 1A, 1B, 2, 3, and 4, a product-level results table, and numbered supporting figures.
+
+\textbf{Edits in this preparation step:} numerical claims were compared with CSV exports; held-out product results and the training-only width-selection qualification were added; Response 4 was shortened and its switch comparisons made explicit; the unverified assertion that the aggregation check passed was changed to the expected numerical example.
+
+\textbf{Disclosure limit:} the earlier prompts that produced the supplied interpretation draft were not included in the material available for report preparation. This record describes the available interaction without reconstructing unknown prompts.
+
+\section*{AI-use record for Task 2 preparation}
+\textbf{Prompt:} ``Finish AI651 Assignment 1 --- Task 2 from the completed Kaggle run, update the report, and prepare the submission repo.'' The detailed instruction specified downloading the saved run, using all fold/seed artifacts, preserving Task 1, excluding optional reflection questions, and publishing a cleaned public repository.
+
+\textbf{Output:} Codex recovered the saved version 2 bundle, checked numeric summaries and the checkpoint metadata, generated an epoch ledger and a shared-axis plot from existing results, prepared the 168-value paste list, and integrated Task 2 into this report.
+
+\textbf{Edits and checks:} the briefing's example (260,929 parameters and RMSE 69.04) was identified as a without-external row rather than overall winning performance. Reporting uses the actual 262,849-parameter winner and six-run aggregates. The active-dropout limitation and shared validation/selection horizons are disclosed. The original Task 2 notebook and forecasts were preserved, and no model was retrained or leaderboard feedback used.
+
+\begin{thebibliography}{1}
+\bibitem{autoformer} Wu et al. (2021). \emph{Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting}, Sections 3.1--3.2. Architectural reference listed in the assignment handout; the submitted notebook is self-contained and builds on the Task 1 mechanisms.
+\end{thebibliography}
+
+\end{document}

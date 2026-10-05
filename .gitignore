@@ -1,0 +1,32 @@
+.DS_Store
+**/.venv/
+**/__pycache__/
+**/.ipynb_checkpoints/
+**/.vscode/
+*.py[cod]
+*.whl
+**/checkpoints/
+*.pt
+*.pth
+*.npy
+*.aux
+*.log
+*.out
+*.toc
+*.xdv
+*.synctex.gz
+.env
+.env.*
+kaggle.json
+access_token
+credentials*.json
+Question 2 - Leaderboard/results/kaggle/
+Question 2 - Leaderboard/task2_autoformer/
+STORAGE_REPORT.md
+QUESTION1_REPORT_WORKFLOW.md
+Task1_Report.tex
+Task1_Report.pdf
+build_report.py
+
+# Canonical forecast CSV lives under submission/.
+Question 2 - Leaderboard/results/submission.csv

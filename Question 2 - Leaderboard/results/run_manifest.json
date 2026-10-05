@@ -1,0 +1,24 @@
+{
+  "selected_variant": "FINAL_with_external",
+  "selected_experiment": {
+    "seq_len": 336,
+    "label_len": 84,
+    "d_model": 96,
+    "n_heads": 4,
+    "e_layers": 2,
+    "d_layers": 1,
+    "d_ff": 192,
+    "moving_avg": 25,
+    "factor": 3,
+    "dropout": 0.1,
+    "target_mode": "global_z",
+    "exog_mode": "all",
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "batch_size": 32
+  },
+  "final_seed": 2026,
+  "final_epochs": 3,
+  "parameters": 262849,
+  "training_minutes": 34.71207449436188
+}

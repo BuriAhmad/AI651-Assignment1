@@ -1,0 +1,14 @@
+{
+  "parameters": 262849,
+  "epochs_full_refit": 3,
+  "epochs_selected_variant_final_cv": 30,
+  "epochs_complete_pipeline": 117,
+  "conservative_declared_epochs": 117,
+  "epoch_scope": "Smoke, screening, both final ablation variants, and full refit; conservative complete-pipeline count, including early-stopping epochs.",
+  "prediction_count": 168,
+  "first_time_idx": 43657,
+  "last_time_idx": 43824,
+  "ensemble": false,
+  "source": "Unmodified saved Kaggle version 2 forecasts",
+  "inference_mode": "Original notebook left dropout active; no replacement predictions generated."
+}

@@ -1,0 +1,26 @@
+{
+  "kernel": "burhanahmadkhanbak/ai651-task2-autoformer-kaggle",
+  "saved_version": 2,
+  "retrieved_date": "2026-10-05",
+  "retrieval": "Kaggle CLI attempted; authenticated Kaggle SDK DownloadKernelOutput with version_number=2 used because CLI kernels output queried an empty running session.",
+  "notebook": "Question 2 - Leaderboard/AI651_Task2_Autoformer_Kaggle.ipynb",
+  "notebook_source_matches_current_remote": true,
+  "saved_version2_source_limitation": "Bundle contains results and rendered figures, not an executed notebook. Local source matches current remote source; selected configuration matches version2 manifest and checkpoint.",
+  "artifact_sha256": {
+    "final_horizon_rmse.csv": "e561a78ec902d07eb7e444532c3eec373cecb588d7d370fbfe601dddd4c98e8a",
+    "final_predictions.npy": "a7d3b499e6f8fe10a174f9b4df2526489b0466dc44fb057dc9680cdf210a9d6b",
+    "submission.csv": "fcc551cb09d68f64f456016ec4aa5678b4a35774e0431a1429b99b8453b2e571",
+    "screening_results.csv": "c782094ba61036cbec83f1990002be08c3926d7da4ecea6860efaef27c2e9e1e",
+    "final_cv_results.csv": "4b00b789ba7d9f505f7eabc61f60c16706dac24c9791b70818f17655c0c3771f",
+    "final_cv_summary.csv": "ddd4ef61ce027426e69ec31b4ff5b959d9b7022122974ada22cb767333fc7905",
+    "screening_summary.csv": "80da5ccdf3ef3584d9a8f8581c3f32823b645fea6a06d22a6ba8ed03814341d6",
+    "best_autoformer.pt": "719d48abe1518d7854546fe50a457b68282cc5bbaf4cba7f42f958f81c924a6a",
+    "run_manifest.json": "043d9765d8ea3146330303b94ea05606c931d7c5f652c3e57d014d4f94d89bae"
+  },
+  "data_sha256": {
+    "student_test.csv": "a1faab0c513a65dc13536452f50d1b483c0089421418154dc8b0381bd9952c63",
+    "student_train.csv": "04658e259dab4f6b2b474cf582c5bfc9ca945674c23350c122abd0f11a63c9f5",
+    "optional_external_data.csv": "b4af0e3b7e7ca5183c2e0bd1f4d7d5aec16d9a5ef8ae3de67ffdc7e851b61b85"
+  },
+  "notebook_sha256": "c259fd783204b4b57e793ec8995f8dbb5bb881e76cb3f8eb92d4dceab2e63e55"
+}
