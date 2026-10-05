@@ -1,3 +1,4 @@
+# Local environments, editor files, and Python caches
 .DS_Store
 **/.venv/
 **/__pycache__/
@@ -5,28 +6,38 @@
 **/.vscode/
 *.py[cod]
 *.whl
-**/checkpoints/
-*.pt
-*.pth
-*.npy
+
+# LaTeX compilation intermediates; the final .tex and .pdf are tracked
 *.aux
 *.log
 *.out
 *.toc
 *.xdv
 *.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Credentials
 .env
 .env.*
 kaggle.json
 access_token
 credentials*.json
+
+# Training checkpoints and raw Kaggle output (curated results are tracked)
+Question 1/checkpoints/
 Question 2 - Leaderboard/results/kaggle/
 Question 2 - Leaderboard/task2_autoformer/
+
+# Regenerable duplicates: CSV tables and the shared-axis plot are tracked
+Question 1/results/design/*.tex
+Question 2 - Leaderboard/results/submission.csv
+Question 2 - Leaderboard/figures/horizon_with_external_original.png
+Question 2 - Leaderboard/figures/horizon_without_external_original.png
+
+# Local preparation notes and obsolete report copies
 STORAGE_REPORT.md
 QUESTION1_REPORT_WORKFLOW.md
 Task1_Report.tex
 Task1_Report.pdf
 build_report.py
-
-# Canonical forecast CSV lives under submission/.
-Question 2 - Leaderboard/results/submission.csv

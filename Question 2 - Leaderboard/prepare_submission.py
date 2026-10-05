@@ -131,7 +131,8 @@ def main():
     ax.set(xlabel='Forecast horizon (steps)', ylabel='RMSE (original target units)',
            title='Final evaluation: six fold/seed squared errors pooled at each step')
     ax.legend(); ax.grid(alpha=.18)
-    fig.savefig(FIGURES / 'horizon_comparison.pdf'); plt.close(fig)
+    fig.savefig(FIGURES / 'horizon_comparison.pdf',
+                metadata={'CreationDate': None, 'ModDate': None}); plt.close(fig)
     task1_notebook = json.loads((ROOT.parent / 'Question 1/Assignment1.ipynb').read_text())
     task1_code = [cell for cell in task1_notebook['cells'] if cell['cell_type'] == 'code']
     task1_executed = (all(cell.get('execution_count') is not None for cell in task1_code)

@@ -1,137 +1,87 @@
 # AI651 Assignment 1
 
-Burhan Ahmad — 27100405
+**Burhan Ahmad — 27100405**
 
-The combined report is **Assignment1_Report.pdf**. Its main LaTeX source is
-**Assignment1_Report.tex**, which includes **Task2_Report_Section.tex**. Compile
-from the repository root with a normal LaTeX distribution, for example:
+This repository contains the completed Task 1 notebook, the Task 2 Autoformer
+implementation and saved experiment results, and the combined report.
 
-```bash
-latexmk -pdf Assignment1_Report.tex
-# or
-tectonic Assignment1_Report.tex
-```
+## Submission files
 
-The report retains the existing five Task 1 responses and adds the completed
-Task 2 experiment. The optional Q2.1–Q2.9 reflection component is omitted.
-The source references the original numbered Task 1 PDF figures and Task 2
-figures by their repository paths; keep those directories with the source.
+- [Assignment1_Report.pdf](Assignment1_Report.pdf): report covering both tasks.
+- [Assignment1_Report.tex](Assignment1_Report.tex): complete LaTeX source, including both tasks and AI-use disclosure.
+- [Question 1/Assignment1.ipynb](Question%201/Assignment1.ipynb): executed full-preset notebook with all three exercises implemented, checks passed, numbered outputs, and deployment choices.
+- `Question 1/results/design/`: original numbered PDF figures and CSV result tables.
+- `Question 2 - Leaderboard/AI651_Task2_Autoformer_Kaggle.ipynb`: source used for the completed Kaggle experiment.
+- `Question 2 - Leaderboard/results/`: screening, final fold/seed metrics, horizon errors, configuration, provenance, and derived audit tables.
+- `Question 2 - Leaderboard/figures/`: original EDA/forecast plots and the shared-axis horizon comparison.
+- `Question 2 - Leaderboard/submission/`: original prediction CSV, the 168-value leaderboard paste list, and parameter/epoch metadata.
 
-## Task 2 implementation and results
+The optional Task 2 reflection questions are omitted. The public repository URL
+appears on the report's first page.
 
-The authoritative implementation is
-`Question 2 - Leaderboard/AI651_Task2_Autoformer_Kaggle.ipynb`.
-It implements progressive moving-average decomposition, FFT autocorrelation,
-time-delay aggregation, and an encoder–decoder with known-future external inputs.
-The notebook lives in the Task 2 directory in this checkout.
+## Task 2 results
 
-The completed saved Kaggle run is version **2** of
-`burhanahmadkhanbak/ai651-task2-autoformer-kaggle`.
-Lightweight original tables and the run manifest are in
-`Question 2 - Leaderboard/results/`; provenance records hashes of the original
-artifacts and input data. The local notebook's sources match the current remote
-notebook sources, and its architecture matches the saved version 2 manifest and
-checkpoint. The downloaded bundle did not contain an executed notebook.
+The saved experiment is version **2** of
+`burhanahmadkhanbak/ai651-task2-autoformer-kaggle`. Final evaluation uses seeds
+2026 and 3407 at chronological origins 43152, 43320, and 43488. These are six
+model-selection evaluations, not hidden-test results; RMSE spread below is the
+sample standard deviation of the six run-level RMSEs.
 
-Final comparison uses seeds 2026 and 3407 at origins 43152, 43320, and 43488.
-Reported means below are arithmetic means over the six fold/seed metrics;
-RMSE spread is sample standard deviation across those six runs.
-
-| Variant | RMSE mean ± SD | MAE | sMAPE (%) | Parameters |
+| Autoformer variant | RMSE mean ± SD | MAE | sMAPE (%) | Parameters |
 | --- | ---: | ---: | ---: | ---: |
-| With A–J | 58.72 ± 16.23 | 45.25 | 82.61 | 262,849 |
+| With external A–J | 58.72 ± 16.23 | 45.25 | 82.61 | 262,849 |
 | Without external data | 88.41 ± 23.55 | 76.54 | 102.41 | 260,929 |
 
-The with-external model improves RMSE in all six matched pairs and reduces its
-mean by 33.58%. Selected settings are raw global target standardization,
-context 336, decoder label length 84, model width 96, four heads, two encoder
-layers, one decoder layer, feed-forward width 192, moving average 25, factor 3,
-dropout 0.1, AdamW learning rate/weight decay 1e-4, and batch size 32.
+External inputs improve RMSE in all six paired runs, reducing mean RMSE by
+33.58%. The selected configuration uses raw target standardization, context
+336, label length 84, width 96, four heads, two encoder layers, one decoder
+layer, feed-forward width 192, moving-average kernel 25, factor 3, dropout 0.1,
+AdamW learning rate/weight decay 1e-4, and batch size 32.
 
-The final model was initialized afresh with seed 2026, fitted on all 43,656
-observed targets for **three epochs**, and produced the original saved 168
-forecasts. No training was rerun during repository preparation.
+The final model was freshly trained on all 43,656 observed targets for three
+epochs. Its 168 saved forecasts cover indices 43657–43824. The leaderboard
+expects the comma-separated values in `submission/leaderboard_predictions.txt`
+and parameter/epoch declarations, rather than a CSV upload. Parameter count is
+**262849**. Metadata distinguishes the **3 full-refit epochs**, **30 selected-variant
+final-CV epochs**, and **117 complete-pipeline epochs**; it uses the latter as a
+conservative declaration including all screening and ablation training.
+`results/epoch_accounting.csv` documents how early-stop run lengths were derived.
+No leaderboard submission was made during repository preparation.
 
-## Leaderboard preparation
+The original notebook leaves dropout active during validation and prediction.
+Saved metrics and forecasts retain that protocol, which is disclosed in the
+report. The same chronological folds were used for checkpoint and architecture
+selection. These limitations qualify the results; no training was rerun to
+replace them.
 
-The assignment requires pasting **168 comma-separated numbers**, not uploading
-a CSV. Prepared files are under `Question 2 - Leaderboard/submission/`:
+## Reproduce or inspect
 
-- `submission.csv`: the unmodified saved Kaggle forecast, indices 43657–43824.
-- `leaderboard_predictions.txt`: exactly 168 values in chronological order.
-- `leaderboard_metadata.json`: parameter count and explicit epoch accounting.
-
-**P = 262849.** The manifest's **3 epochs** describes only the full-history fit.
-The handout also says to count preceding early-stopping training alongside a
-refit. `results/epoch_accounting.csv` records the original pipeline: one smoke
-epoch, 55 screening epochs, 30 with-external final-CV epochs, 28 without-external
-final-CV epochs, and three full-fit epochs, totaling **117**. Prepared metadata
-uses **E = 117 as a conservative complete-pipeline declaration**, explicitly
-including selection/ablation training rather than equating E with the refit
-count. Early-stopping run lengths are derived from saved best epochs and the
-original patience/cap logic; they are not newly measured logs.
-
-No leaderboard submission was made during preparation. No hidden test score is
-reported, and leaderboard feedback was not used for model selection.
-
-## Reproduction
-
-Use Python 3.11 or later. Install dependencies in an isolated environment:
+Use Python 3.11 or later and install the requirements for the task you wish to
+run. For Task 1, start Jupyter in `Question 1/` and set `PA1_PRESET=full` before
+running. For Task 2, start from this root or its notebook directory; the supplied
+CSV data are included under `Question 2 - Leaderboard/Data/`.
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r 'Question 2 - Leaderboard/requirements.txt'
+python -m pip install -r 'Question 1/requirements.txt' -r 'Question 2 - Leaderboard/requirements.txt'
 jupyter lab
 ```
 
-Open the Task 2 notebook and run top to bottom to reproduce the original search
-and final training. It searches for the three supplied CSVs; start Jupyter from
-this root or the Task 2 directory. On Kaggle, attach the dataset containing
-those CSVs. Full training is expensive; it is unnecessary for inspecting the
-committed report and tables.
-
-To audit saved artifacts and regenerate the shared-axis horizon figure and
-paste list **without training**:
+Full training takes hours. To inspect and audit the saved results without
+training, run:
 
 ```bash
 python 'Question 2 - Leaderboard/prepare_submission.py'
 ```
 
-To retrieve the private original run as its owner, install `kaggle>=2.2,<3`,
-authenticate locally with `kaggle auth login`, and run:
+To compile the report, run `tectonic Assignment1_Report.tex` or
+`latexmk -pdf Assignment1_Report.tex` from this root. Keep the referenced figure
+directories alongside the source. A local LaTeX compiler is required for this
+report's external images; the Codex standalone compiler does not package them.
 
-```bash
-python 'Question 2 - Leaderboard/download_completed_run.py'
-```
-
-This downloads version 2, not the currently running live session. Kaggle CLI
-2.2.4's `kernels output` returned empty live-session output during preparation,
-so the helper uses the official authenticated SDK's saved-version endpoint.
-The raw download and model checkpoint remain local and are ignored by Git.
-
-## Evidence and limitations
-
-The original notebook leaves models in training mode in `fold_pred` and
-`predict_test`, so dropout remains active even under `no_grad`. Tables and
-forecasts document that original stochastic inference protocol. This issue is
-disclosed in the report; the notebook, metrics, and predictions were not silently
-replaced. Future deterministic evaluation should call `model.eval()` and restore
-training mode before training resumes; its metrics must be measured anew.
-
-The same recent horizons were used for early stopping and architecture selection.
-Six fold/seed runs therefore provide selection evidence, not an independent
-final-test estimate or a confidence interval. All external features were ablated
-jointly; individual-feature and historical-versus-future contributions were not
-isolated. No single fixed operating period is assumed.
-
-The completed `Question 1/Assignment1.ipynb` is included. Its saved run reports
-`preset=full`, contains the three implemented exercises, and retains all 21 code
-cells' execution counts and 39 output entries. The deployment choices are
-Period-routed ridge for both populations, and Output 4.3 reports the final test
-results. `harness/`, `requirements.txt`, the combined PDF and LaTeX source, and
-the numbered PDF figures are also included. Task 1 was not rerun during Task 2
-repository preparation.
-
-AI assistance is disclosed at the end of the report. Earlier prompts behind the
-previously supplied Task 1 draft were not available for reconstruction.
+The optional `download_completed_run.py` retrieves saved Kaggle version 2 using
+owner authentication (`kaggle>=2.2,<3`). Checkpoints, raw download duplicates,
+local environments, credentials, and obsolete report copies are excluded from
+Git. Source notebooks, data, the report, lightweight results, and required
+figures are tracked.
