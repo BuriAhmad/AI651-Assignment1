@@ -125,14 +125,13 @@ final-test estimate or a confidence interval. All external features were ablated
 jointly; individual-feature and historical-versus-future contributions were not
 isolated. No single fixed operating period is assumed.
 
-**Task 1 submission item still needs reconciliation:** although Task 1's report
-and result exports are present, the current local `Question 1/Assignment1.ipynb`
-contains implementation placeholders and no saved execution outputs. It was
-preserved as instructed, not rerun or rewritten. Replace it with the already
-completed, executed full-preset notebook before submitting the assignment.
-`harness/` and `requirements.txt` remain beside it. The handout requires that
-executed notebook in addition to the combined PDF, its LaTeX source, and each
-numbered PDF figure included in the report.
+The completed `Question 1/Assignment1.ipynb` is included. Its saved run reports
+`preset=full`, contains the three implemented exercises, and retains all 21 code
+cells' execution counts and 39 output entries. The deployment choices are
+Period-routed ridge for both populations, and Output 4.3 reports the final test
+results. `harness/`, `requirements.txt`, the combined PDF and LaTeX source, and
+the numbered PDF figures are also included. Task 1 was not rerun during Task 2
+repository preparation.
 
 AI assistance is disclosed at the end of the report. Earlier prompts behind the
 previously supplied Task 1 draft were not available for reconstruction.

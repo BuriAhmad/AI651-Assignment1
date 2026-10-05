@@ -132,13 +132,22 @@ def main():
            title='Final evaluation: six fold/seed squared errors pooled at each step')
     ax.legend(); ax.grid(alpha=.18)
     fig.savefig(FIGURES / 'horizon_comparison.pdf'); plt.close(fig)
+    task1_notebook = json.loads((ROOT.parent / 'Question 1/Assignment1.ipynb').read_text())
+    task1_code = [cell for cell in task1_notebook['cells'] if cell['cell_type'] == 'code']
+    task1_executed = (all(cell.get('execution_count') is not None for cell in task1_code)
+                      and all('raise NotImplementedError' not in ''.join(cell['source'])
+                              for cell in task1_code)
+                      and any('preset=full' in ''.join(output.get('text', []))
+                              for cell in task1_code for output in cell.get('outputs', [])))
     audit = {'checks': 'Passed data continuity, target visibility, one-hot states, 168 ordered finite '
                        'nonnegative predictions, all 12 fold/seed rows, summary aggregation, '
                        'configuration consistency, epoch ledger, and horizon coverage.',
              'rmse_reduction_pct': float(100 * (1 - summary.loc['FINAL_with_external', 'mean_rmse'] /
                                                    summary.loc['FINAL_without_external', 'mean_rmse'])),
              'all_six_paired_rmse_improve': bool((paired.rmse_with < paired.rmse_without).all()),
-             'task1_notebook_status': 'Local notebook remains unexecuted with placeholders; preserved.',
+             'task1_notebook_status': ('Saved full-preset Task 1 notebook is present with implemented '
+                                       'exercises and outputs.' if task1_executed else
+                                       'Task 1 notebook requires inspection before submission.'),
              'task2_code_limitation': 'train_fold/fold_pred/predict_test never call model.eval(); '
                                       'validation and final inference use active dropout.',
              'no_training_or_leaderboard_submission_performed': True}
